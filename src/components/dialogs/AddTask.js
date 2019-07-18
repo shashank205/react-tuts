@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import AddIcon from '@material-ui/icons/Add';
-import {Fab, Button, Grid, Dialog, Paper, Chip, TextField} from '@material-ui/core';
+import {Fab, Button, Grid, Dialog, Paper, Chip, TextField, withStyles} from '@material-ui/core';
 import {DatePicker, MuiPickersUtilsProvider,} from '@material-ui/pickers';  
 import DateFnsUtils from '@date-io/date-fns';
 import ListItems from './ListItems';
@@ -47,11 +47,11 @@ const styles = {
 
 const chipLabels = ["Later Today", "This Evening", "Tomorrow", "Next Week", "Custom", "Someday"];
 
-class AddTask extends React.Component {
+const AddTask = props => {
             
-    onClickAddTask = () => {
+    const onClickAddTask = () => {
         let date;
-        switch(this.props.dateLabel) {
+        switch(props.dateLabel) {
             case chipLabels[0]: 
             case chipLabels[1]: 
                 date = new Date();
@@ -63,7 +63,7 @@ class AddTask extends React.Component {
                 date = moment(new Date()).add(7, 'days');
                 break;
             case chipLabels[4]: 
-                date = this.props.customDate;
+                date = props.customDate;
                 break;    
             case chipLabels[5]: 
                 date="someday"
@@ -72,91 +72,90 @@ class AddTask extends React.Component {
                 date = new Date();  
         }
         const task = {
-            id: new Date() + this.props.task.toLocaleLowerCase().replace(/ /g, '-'),
-            list: this.props.selectedList,
+            id: new Date() + props.task.toLocaleLowerCase().replace(/ /g, '-'),
+            list: props.selectedList,
             date: date,
-            title: this.props.task,
-            notes: this.props.notes
+            title: props.task,
+            notes: props.notes
         }
-        this.props.createTask(task, this.props.activeList.id);
-        this.props.handleToggle(this.props.activeList);
-    }    
-
-    render() {
-        return(
-            <Fragment>
-                <Fab variant="extended" onClick={() => this.props.handleToggle(this.props.activeList)} style={styles.button} color="secondary" size="small" >
-                    <AddIcon style={styles.addIcon}/>
-                    New
-                </Fab>
-                {this.props.lists.length > 0 ?
-                <Dialog open={this.props.open} onClose={() => this.props.handleToggle(this.props.activeList)}fullWidth>
-                    <Grid container>
-                        <Grid item xs={8}>
-                            <div style={styles.left}>
-                                <TextField
-                                    style={{width: "100%"}}
-                                    placeholder="I want to..."
-                                    variant="outlined"
-                                    onChange={(e) => this.props.updateTaskName(e)}
-                                />
-                                <TextField
-                                    label="Notes"
-                                    multiline
-                                    rows="14"
-                                    variant="outlined"
-                                    style={{width: "100%", marginTop: "10px"}}
-                                    onChange={(e) => this.props.updateTaskNotes(e)}
-                                />
-                            </div>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Paper style={styles.right}>
-                                <h5>LIST:</h5>
-                                    <ListItems
-                                        list={this.props.selectedList}
-                                        lists={this.props.lists}
-                                        changeListCategory={this.props.changeListCategory}
-                                    />
-                                <h5>REMIND ME:</h5>
-                                {chipLabels.map(label => 
-                                    <div key={label} style={styles.chipDiv}>
-                                        <Chip 
-                                            label={label}
-                                            size="small"
-                                            onClick={(e) => this.props.setDate(e)}
-                                            style={styles.chip}
-                                            color={this.props.dateLabel === label ? "secondary" : "default"}
-                                        />
-                                    </div>
-                                )}
-                                {this.props.showDatePicker ? 
-                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <DatePicker
-                                        onAccept={(date) => this.props.setCustomDate(date)}
-                                        cancelLabel=''
-                                        onClose={() => this.props.closeDatePicker}
-                                        open={true}
-                                        value={this.props.customDate}
-                                        onChange={() => {}}
-                                        disablePast={true}
-                                    />
-                                </MuiPickersUtilsProvider> : null}
-                            </Paper>
-                        </Grid>
-                    </Grid>                    
-                    <Button 
-                        color="secondary"
-                        style={styles.addTask}
-                        disabled={!this.props.task}
-                        onClick={() => this.onClickAddTask()}
-                    >
-                        Add Task
-                    </Button>
-                </Dialog> : <NoList open={this.props.open} closeDialog={() => this.props.handleToggle(this.props.activeList)}/>}
-            </Fragment>
-        )
+        props.createTask(task, props.activeList.id);
+        props.handleToggle(props.activeList);
     }
+        
+    const {classes} = props;
+
+    return(
+        <Fragment>
+            <Fab variant="extended" onClick={() => props.handleToggle(props.activeList)} className={classes.button} color="secondary" size="small" >
+                <AddIcon className={classes.addIcon}/>New
+            </Fab>
+            {props.lists.length > 0 ?
+            <Dialog data-test='dialogComponent' open={props.open} onClose={() => props.handleToggle(props.activeList)}fullWidth>
+                <Grid container>
+                    <Grid item xs={8}>
+                        <div className={classes.left}>
+                            <TextField
+                                style={{width: "100%"}}
+                                placeholder="I want to..."
+                                variant="outlined"
+                                onChange={(e) => props.updateTaskName(e)}
+                            />
+                            <TextField
+                                label="Notes"
+                                multiline
+                                rows="14"
+                                variant="outlined"
+                                style={{width: "100%", marginTop: "10px"}}
+                                onChange={(e) => props.updateTaskNotes(e)}
+                            />
+                        </div>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Paper className={classes.right}>
+                            <h5>LIST:</h5>
+                                <ListItems
+                                    list={props.selectedList}
+                                    lists={props.lists}
+                                    changeListCategory={props.changeListCategory}
+                                />
+                            <h5>REMIND ME:</h5>
+                            {chipLabels.map(label => 
+                                <div key={label} className={classes.chipDiv}>
+                                    <Chip 
+                                        label={label}
+                                        size="small"
+                                        onClick={(e) => props.setDate(e)}
+                                        className={classes.chip}
+                                        color={props.dateLabel === label ? "secondary" : "default"}
+                                    />
+                                </div>
+                            )}
+                            {props.showDatePicker ? 
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <DatePicker
+                                    onAccept={(date) => props.setCustomDate(date)}
+                                    cancelLabel=''
+                                    onClose={() => props.closeDatePicker}
+                                    open={true}
+                                    value={props.customDate}
+                                    onChange={() => {}}
+                                    disablePast={true}
+                                />
+                            </MuiPickersUtilsProvider> : null}
+                        </Paper>
+                    </Grid>
+                </Grid>                    
+                <Button 
+                    color="secondary"
+                    className={classes.addTask}
+                    disabled={!props.task}
+                    onClick={() => onClickAddTask()}
+                >
+                    Add Task
+                </Button>
+            </Dialog> : <NoList open={props.open} closeDialog={() => props.handleToggle(props.activeList)}/>}
+        </Fragment>
+    )
 }
 
 const mapStateToProps = state => {
@@ -229,4 +228,6 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddTask)
+export default withStyles(styles)(
+    connect(mapStateToProps, mapDispatchToProps)(AddTask)
+);

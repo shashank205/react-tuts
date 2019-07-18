@@ -4,6 +4,7 @@ import ExpansionItem from './ExpansionItem';
 import moment from 'moment';
 import TaskCard from './TaskCard';
 import { connect } from "react-redux";
+import {dateTypes} from '../constants';
 
 const styles = {
     container: {
@@ -33,25 +34,26 @@ const styles = {
         height: '100%',
     }
 }
-const dateTypes= ['Today', 'Tomorrow', 'Upcoming', 'Someday'];
+
+export const getTasksByDate = props => {
+    const tasks = [[], [], [], []];
+    props.forEach(task => {
+        if(task.date === 'someday') {
+            tasks[3].push(task);
+        } else if(moment(task.date).isSame(moment(), 'd')) {
+            tasks[0].push(task);
+        } else if(moment(task.date).isSame(moment().add(1, 'days'), 'd')) {
+            tasks[1].push(task);
+        } else {
+            tasks[2].push(task);
+        }
+    });
+    return tasks;
+}
+
 const RightPane = props => {  
 
-    const getTasksByDate = () => {
-        const tasks = [[], [], [], []];
-        props.tasks.forEach(task => {
-            if(task.date === 'someday') {
-                tasks[3].push(task);
-            } else if(moment(task.date).isSame(moment(), 'd')) {
-                tasks[0].push(task);
-            } else if(moment(task.date).isSame(moment().add(1, 'days'), 'd')) {
-                tasks[1].push(task);
-            } else {
-                tasks[2].push(task);
-            }
-        });
-        return tasks;
-    }
-    const tasksByDate = getTasksByDate();
+    const tasksByDate = getTasksByDate(props.tasks);
 
     return(
         <div style={styles.container}>
@@ -67,7 +69,7 @@ const RightPane = props => {
                 )}    
                 </Paper>
                 {props.selectedTask.hasOwnProperty('title') ? 
-                <div style={styles.paper2} >
+                <div style={styles.paper2}>
                     <TaskCard />
                 </div> : null
                 }
@@ -84,8 +86,4 @@ const mapStateToProps = state => {
     }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps) (RightPane);
+export default connect(mapStateToProps, () => {}) (RightPane);

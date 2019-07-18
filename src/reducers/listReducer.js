@@ -56,7 +56,6 @@ export default(state={
                 ...state,
                 activeList: state.lists.find(list => list.id === action.payload),
                 displayTitle: state.lists.find(list => list.id === action.payload).title
-
             }  
             break; 
         case 'SELECT_ALL_LISTS': 

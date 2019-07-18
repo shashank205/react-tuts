@@ -3,31 +3,29 @@ import {Dialog, DialogTitle, ListItem, List, ListItemText, Link} from '@material
 import CheckBox from '@material-ui/icons/CheckBox';
 import { connect } from "react-redux";
 
-class ListItems extends React.Component {
+const ListItems = props => {
     
-    onClickListItem = (list) => {
-        this.props.changeListCategory(list);
-        this.props.handleToggle();
+    const onClickListItem = (list) => {
+        props.changeListCategory(list);
+        props.handleToggle();
     }    
 
-    render() {
-        return(
-            <Fragment>
-                <Link onClick={this.props.handleToggle} underline="none">{this.props.list.title}</Link>
-                <Dialog open={this.props.open} onClose={this.props.handleToggle}>
-                    <DialogTitle>Move to...</DialogTitle>
-                    <List>
-                        {this.props.lists.map(list => (
-                        <ListItem button key={list.id} onClick={() => this.onClickListItem(list)}>
-                            <ListItemText primary={list.title} />
-                            <CheckBox style={this.props.list.id !== list.id ? {display: "none"} : null}/>
-                        </ListItem>
-                        ))}
-                    </List>
-                </Dialog>
-            </Fragment>
-        )
-    }
+    return(
+        <Fragment>
+            <Link onClick={props.handleToggle} underline="none">{props.list.title}</Link>
+            <Dialog open={props.open} onClose={props.handleToggle}>
+                <DialogTitle>Move to...</DialogTitle>
+                <List>
+                    {props.lists.map(list => (
+                    <ListItem button key={list.id} onClick={() => onClickListItem(list)}>
+                        <ListItemText primary={list.title} />
+                        <CheckBox style={props.list.id !== list.id ? {display: "none"} : null}/>
+                    </ListItem>
+                    ))}
+                </List>
+            </Dialog>
+        </Fragment>
+    )
 }
 
 const mapStateToProps = state => {

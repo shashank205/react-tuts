@@ -16,7 +16,7 @@ const styles = {
 export default () => {
     return (
         <Toolbar style={styles.toolbar}>
-            <AddTask/>
+            <AddTask data-test="addTaskComponent"/>
         </Toolbar>
     );
 }

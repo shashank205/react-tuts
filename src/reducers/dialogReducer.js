@@ -1,4 +1,4 @@
-const chipLabels = ["Later Today", "This Evening", "Tomorrow", "Next Week", "Custom", "Someday"];
+import {chipLabels} from '../constants';
 
 export default(state = {
     openAdd: false,
